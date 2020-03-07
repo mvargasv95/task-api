@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
-import { get, post, put, remove } from './decorators'
+import { get, post, put, remove, controller } from './decorators'
 
+@controller('/')
 class TaskController {
   @get('/:id')
   getTask(req: Request, res: Response) {}
@@ -11,6 +12,11 @@ class TaskController {
   @remove('/:id')
   removeTask(req: Request, res: Response) {}
 
+  @put('/:id')
+  updateTask() {}
+
   @get('/')
-  getAll(req: Request, res: Response) {}
+  getAll(req: Request, res: Response) {
+    res.send('looks ok!')
+  }
 }

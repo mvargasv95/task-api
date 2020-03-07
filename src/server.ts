@@ -1,6 +1,7 @@
 import express, { json, urlencoded, Router } from 'express'
 import bodyParser from 'body-parser'
 import { AppRouter } from './AppRouter'
+import './controllers/TaskController'
 
 const app = express()
 
