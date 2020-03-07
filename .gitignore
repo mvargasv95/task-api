@@ -3,3 +3,6 @@
 
 # build
 /build
+
+# ds store
+.DS_Store
