@@ -3,8 +3,11 @@ import { get, post, put, remove, controller } from './decorators'
 
 @controller('/')
 class TaskController {
-  @get('/:id')
-  getTask(req: Request, res: Response) {}
+  @get(':id')
+  getTask(req: Request, res: Response) {
+    const { id } = req.params
+    res.send(`id is ${id}`)
+  }
 
   @post('/')
   postTask(req: Request, res: Response) {}
