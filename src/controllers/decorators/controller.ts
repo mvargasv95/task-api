@@ -11,8 +11,6 @@ function bodyValidator(keys: string[]): RequestHandler {
       return
     }
 
-    console.log('here', req.body)
-
     for (const key of keys) {
       if (!req.body[key]) {
         res.status(400).send(`Missing property ${key}`)
@@ -42,7 +40,17 @@ export function controller(routePrefix: string) {
 
       const validator = bodyValidator(requiredBodyProps)
 
-      if (path) router[method](`${routePrefix}${path}`, validator, routeHandler)
+      const middlewares =
+        Reflect.getMetadata(MetadataKeys.middleware, target.prototype, key) ||
+        []
+
+      if (path)
+        router[method](
+          `${routePrefix}${path}`,
+          ...middlewares,
+          validator,
+          routeHandler
+        )
     }
   }
 }
