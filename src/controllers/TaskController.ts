@@ -11,6 +11,7 @@ import {
   use
 } from './decorators'
 import Task from '../models/task.model'
+import { json } from 'body-parser'
 
 const redis = createClient(6379, 'localhost')
 
@@ -25,16 +26,19 @@ const isIdValid = (req: Request, res: Response, next: NextFunction): void => {
 class TaskController {
   @get(':id')
   @use(isIdValid)
-  async getTask(req: Request, res: Response) {
+  getTask(req: Request, res: Response) {
     const { id } = req.params
-    try {
-      const task = await Task.findById(id).exec()
-      if (!task) return res.status(400).send('Unable to find task')
-      return res.status(200).json({ task })
-    } catch (e) {
-      console.error(e)
-      return res.status(404).send('Not found')
-    }
+    redis.get(id, async (err: Error, reply: string) => {
+      if (err) res.status(400).send('Bad request')
+      else if (reply) res.status(200).send(reply)
+      else {
+        const task = await Task.findById(id).exec()
+        if (!task) res.status(400).send('Bad request')
+        redis.set(id, JSON.stringify(task), () =>
+          res.status(200).json({ task })
+        )
+      }
+    })
   }
 
   @post('/')
